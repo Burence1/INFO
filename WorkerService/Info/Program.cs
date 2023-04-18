@@ -1,4 +1,7 @@
 using Info;
+using Quartz.Impl;
+using Quartz;
+using Quartz.Spi;
 
 var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
@@ -9,6 +12,10 @@ var configuration = new ConfigurationBuilder()
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
+        
+        services.AddSingleton<IJobFactory,IJobFactory>();
+        services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
         services.AddHostedService<Worker>();
     })
     .Build();

@@ -65,7 +65,7 @@ namespace Info
             catch (Exception ex)
             {
                 var methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
-                //logger.LogMethodsErrorDetails(methodName, e, 1, 4);
+                logger.LogMethodsErrorDetails(methodName, ex, 1, 4);
             }
         }
 
