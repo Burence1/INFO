@@ -1,6 +1,6 @@
 namespace Info
 {
-    public class Worker : BackgroundService
+    public class Worker : IHostedService
     {
         private readonly ILogger<Worker> _logger;
 
@@ -9,13 +9,14 @@ namespace Info
             _logger = logger;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(1000, stoppingToken);
-            }
+            throw new NotImplementedException();
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
