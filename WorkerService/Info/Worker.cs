@@ -2,6 +2,7 @@ using Info.Models;
 using Info.Utils;
 using Quartz;
 using Quartz.Spi;
+using System.Reflection;
 
 namespace Info
 {
@@ -63,14 +64,16 @@ namespace Info
             }
             catch (Exception ex)
             {
-
+                var methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
+                //logger.LogMethodsErrorDetails(methodName, e, 1, 4);
             }
         }
 
 
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
+            await Scheduler.Shutdown(cancellationToken).ConfigureAwait(false);
         }
     }
 }
