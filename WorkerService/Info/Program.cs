@@ -2,6 +2,8 @@ using Info;
 using Quartz.Impl;
 using Quartz;
 using Quartz.Spi;
+using Info.Utils;
+using Serilog;
 
 var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
@@ -10,14 +12,17 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+    .UseSerilog()
+    .UseWindowsService()
+    .ConfigureServices((hostContext, services) =>
     {
-        
-        services.AddSingleton<IJobFactory,IJobFactory>();
+        //Logger configuration
+        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(hostContext.Configuration).CreateLogger();
+
+        services.AddSingleton<IJobFactory,JobFactory>();
         services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
         services.AddHostedService<Worker>();
-    })
-    .Build();
+    }).Build();
 
 await host.RunAsync();
