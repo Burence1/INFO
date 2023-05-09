@@ -31,6 +31,9 @@ namespace Info.Implementations
         {
             try
             {
+                //var retrieveinfo = new RetrieveInformation(configuration);
+
+
                 return await Task.FromResult("");
             }
             catch (Exception ex)
