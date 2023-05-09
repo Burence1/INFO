@@ -20,6 +20,21 @@ namespace Info.Utils
             return dateString;
         }
 
+        public static async Task<string> GetConnectionStringMaster(IConfiguration configuration)
+        {
+            DbConnection _dbConn = new DbConnection();
+
+            var encryptedSv = configuration["DBConnKeys:SV"];
+            var encryptedDb = configuration["DBConnKeys:DB"];
+            var encryptedUi = configuration["DBConnKeys:UI"];
+            var encryptedPw = configuration["DBConnKeys:PW"];
+            var dbConn = configuration["AppSettings:DBConn"];
+
+            var connectionStringMaster = await _dbConn.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw);
+
+            return await Task.FromResult(connectionStringMaster);
+        }
+
         public static async Task<string> GetConnectionString(IConfiguration configuration,string? databaseName)
         {
             DbConnection _dbConn = new DbConnection();
