@@ -81,22 +81,52 @@ namespace Info
             {
                 var _dbinterface = new DbInterface (_configuration, await DbConnection.GetConnectionString(
                     _configuration, await ETLDatabase()));
+                _sqlCommand = await _dbinterface.ETLProcess(1);
 
-               
+                _ = _dbinterface.ExecRecords(7,"", _sqlCommand);
+                spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);
 
+                return await Task.FromResult(await CheckSpResults(spResults));
             }
-            catch (Exception ex) { 
+            catch (Exception ex) {
+                _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
+                Loggers.LogMethodsErrorDetails(_methodName, ex, 0, 0);
+                throw;
             }
         }
 
-        public async Task<bool> TransactionsETL()
+        //public async Task<bool> TransactionsETL()
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //    }
+        //}
+
+        protected async Task<bool> CheckSpResults(string? spResults)
         {
             try
             {
+                Loggers.CreateLogs($"Stored Procedure Results : {spResults} ");
 
+                var results = spResults != null;
+
+                var subResult = spResults?[..1];
+                if (subResult != "1")
+                {
+                    results = false;
+                }
+
+                return await Task.FromResult(results);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
+                Loggers.LogMethodsErrorDetails(_methodName, e, 0, 0);
+                throw;
             }
         }
     }

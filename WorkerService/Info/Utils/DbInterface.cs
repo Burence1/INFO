@@ -267,5 +267,36 @@ namespace Info.Utils
                 return null;
             }
         }
+
+        public async Task<SqlCommand?> ETLProcess(int Mode, string processDesc = "", int etlStatus = 0)
+        {
+            var connString = new SqlConnection(_connectionString);
+
+            try
+            {
+                connString.Open();
+                var cmd = new SqlCommand()
+                {
+                    CommandText = "[dbo].[ETLProcess]",
+                    CommandTimeout = 0,
+                    CommandType = CommandType.StoredProcedure,
+                    Connection = connString
+                };
+
+                cmd.Parameters.Add("@Mode",SqlDbType.Int).Value = Mode;
+                cmd.Parameters.Add("@processDesc", SqlDbType.VarChar, 100).Value = processDesc;
+                cmd.Parameters.Add("@etlStatus", SqlDbType.Int).Value = etlStatus;
+                cmd.Parameters.Add("@Result", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
+
+                connString.Close();
+                return await Task.FromResult(cmd);
+            }
+            catch (Exception ex)
+            {
+                Loggers.LogMethodsErrorDetails(MethodName, ex, 0, 0);
+                connString.Close();
+                return null;
+            }
+        }
     }
 }
