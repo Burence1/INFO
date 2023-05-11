@@ -31,15 +31,20 @@ namespace Info.Implementations
         {
             try
             {
-                //var retrieveinfo = new RetrieveInformation(configuration);
+                var retrieveinfo = new RetrieveData(Configuration);
+                var _dbInterface = new DbInterface(Configuration, 
+                    await DbConnection.GetConnectionString(Configuration, await retrieveinfo.ETLDatabase()));
 
+                var expression = await _dbInterface.GetParams("001", "ETLCheckExpression");
 
-                return await Task.FromResult("");
+                return await Task.FromResult(expression);
             }
             catch (Exception ex)
             {
                 _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
                 Loggers.LogMethodsErrorDetails(_methodName, ex,0,0);
+
+                throw;
             }
         }
     }

@@ -95,16 +95,26 @@ namespace Info
             }
         }
 
-        //public async Task<bool> TransactionsETL()
-        //{
-        //    try
-        //    {
+        public async Task<bool> TransactionsETL()
+        {
+            try
+            {
+                var _dbinterface = new DbInterface(_configuration, await DbConnection.GetConnectionString(
+                    _configuration, await ETLDatabase()));
+                _sqlCommand = await _dbinterface.ETLProcess(2);
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //    }
-        //}
+                _ = _dbinterface.ExecRecords(7, "", _sqlCommand);
+                spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);
+
+                return await Task.FromResult(await CheckSpResults(spResults));
+            }
+            catch (Exception ex)
+            {
+                _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
+                Loggers.LogMethodsErrorDetails(_methodName, ex, 0, 0);
+                throw;
+            }
+        }
 
         protected async Task<bool> CheckSpResults(string? spResults)
         {
