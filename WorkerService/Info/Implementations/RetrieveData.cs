@@ -139,5 +139,25 @@ namespace Info
                 throw;
             }
         }
+
+        public async Task<int> GetEtlParams(string paramCat)
+        {
+            try
+            {
+                var retrieve = new RetrieveData(_configuration);
+                var dbInterface = new DbInterface(_configuration,
+                    await DbConnection.GetConnectionString(_configuration, await retrieve.ETLDatabase()));
+
+                var allowedETL = Convert.ToInt16(await dbInterface.GetParams("001", paramCat.Trim()));
+
+                return await Task.FromResult(allowedETL);
+            }
+            catch(Exception ex)
+            {
+                _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
+                Loggers.LogMethodsErrorDetails(_methodName, e, 0, 0);
+                throw;
+            }
+        }
     }
 }
