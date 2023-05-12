@@ -22,6 +22,10 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IJobFactory,JobFactory>();
         services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
+        #region Adding JobType
+        services.AddSingleton<>();
+        #endregion
+
         services.AddHostedService<Worker>();
     }).Build();
 
