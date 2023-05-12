@@ -4,6 +4,9 @@ using Quartz;
 using Quartz.Spi;
 using Info.Utils;
 using Serilog;
+using Info.Jobs;
+using Info.Models;
+using Info.Implementations;
 
 var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
@@ -22,8 +25,17 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IJobFactory,JobFactory>();
         services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-        #region Adding JobType
-        services.AddSingleton<>();
+        #region Register JobType To Services
+        services.AddSingleton<ETLAutomationJob>();
+        #endregion
+
+        #region Executing Job
+
+        var jobMetadata = new List<JobMetadata>
+        {
+            new(Guid.NewGuid(),typeof(ETLAutomationJob),"ETL Process Job",RetrieveCronExpressions.RunETLExpression(configuration).Result)
+        };
+
         #endregion
 
         services.AddHostedService<Worker>();
