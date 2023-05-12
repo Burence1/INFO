@@ -155,7 +155,7 @@ namespace Info
             catch(Exception ex)
             {
                 _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
-                Loggers.LogMethodsErrorDetails(_methodName, e, 0, 0);
+                Loggers.LogMethodsErrorDetails(_methodName, ex, 0, 0);
                 throw;
             }
         }

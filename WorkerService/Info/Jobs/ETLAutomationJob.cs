@@ -32,7 +32,7 @@ namespace Info.Jobs
                 {
                     var source = new CancellationTokenSource();
                     var tokens = source.Token;
-                    var info = new ETLService(Configuration);
+                    var etlService = new ETLService(Configuration);
 
                     var etlPauseBetweenFailure = retrieve.GetEtlParams("etlPauseBetweenFailure").Result;
 
@@ -47,7 +47,7 @@ namespace Info.Jobs
                                 }
                             });
 
-                    _ = retryPolicyNeedsTrueResponse.Execute(() => ETLService.EtlAutomation(tokens).Result);
+                    _ = retryPolicyNeedsTrueResponse.Execute(() => etlService.EtlAutomation(tokens).Result);
                 }
                 else
                 {
