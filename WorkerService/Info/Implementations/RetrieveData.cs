@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Info.Utils;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.VisualBasic;
 
 namespace Info
 {
@@ -79,14 +81,22 @@ namespace Info
         {
             try
             {
-                var _dbinterface = new DbInterface (_configuration, await DbConnection.GetConnectionString(
+                if (Strings.Left(await CheckETLRun(DateTime.Today), 1) == "0")
+                {
+                    Loggers.CreateLogs("ETL Process already run");
+                    
+                    return false;
+                }
+                
+                    var _dbinterface = new DbInterface(_configuration, await DbConnection.GetConnectionString(
                     _configuration, await ETLDatabase()));
-                _sqlCommand = await _dbinterface.ETLProcess(1);
+                    _sqlCommand = await _dbinterface.ETLProcess(1);
 
-                _ = _dbinterface.ExecRecords(7,"", _sqlCommand);
-                spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);
+                    _ = _dbinterface.ExecRecords(7, "", _sqlCommand);
+                    spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);
 
-                return await Task.FromResult(await CheckSpResults(spResults));
+                    return await Task.FromResult(await CheckSpResults(spResults));
+                
             }
             catch (Exception ex) {
                 _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
@@ -99,7 +109,7 @@ namespace Info
         {
             try
             {
-                var _dbinterface = new DbInterface(_configuration, await DbConnection.GetConnectionString(
+                    var _dbinterface = new DbInterface(_configuration, await DbConnection.GetConnectionString(
                     _configuration, await ETLDatabase()));
                 _sqlCommand = await _dbinterface.ETLProcess(2);
 
@@ -156,6 +166,29 @@ namespace Info
             {
                 _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
                 Loggers.LogMethodsErrorDetails(_methodName, ex, 0, 0);
+                throw;
+            }
+        }
+
+        public async Task<string> CheckETLRun(DateTime dateTime)
+        {
+            try
+            {
+                var retrieve = new RetrieveData(_configuration);
+                var dbInterface = new DbInterface(_configuration,
+                    await DbConnection.GetConnectionString(_configuration, await retrieve.ETLDatabase()));
+
+                _sqlCommand = await dbInterface.ETLProcess(3);
+
+                _ = dbInterface.ExecRecords(7, "", _sqlCommand);
+                spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);
+
+                return await Task.FromResult(spResults);
+            }
+            catch(Exception ex)
+            {
+                _methodName = MethodBase.GetCurrentMethod().ReflectedType.Name;
+                Loggers.LogMethodsErrorDetails(_methodName,ex,0,0);
                 throw;
             }
         }
