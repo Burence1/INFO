@@ -35,7 +35,7 @@ namespace Info.Implementations
                 var _dbInterface = new DbInterface(Configuration, 
                     await DbConnection.GetConnectionString(Configuration, await retrieveinfo.ETLDatabase()));
 
-                var expression = await _dbInterface.GetParams("001", "ETLCheckExpression");
+                var expression = await _dbInterface.GetParams("001", "ETLRunExpression");
 
                 return await Task.FromResult(expression);
             }
