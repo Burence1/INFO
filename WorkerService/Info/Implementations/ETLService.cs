@@ -49,7 +49,7 @@ namespace Info.Implementations
 
                         case true when customerInfoEtl.Result == false:
                             result = false;
-                            _logger.CreateLogs("Before End Of Day Backup  failed");
+                            _logger.CreateLogs("Customer Info ETL has Completed Successfully failed!!");
                             break;
                     }
                         }, token);
