@@ -196,7 +196,7 @@ namespace Info.Utils
                     return functionReturnValue;
                 }
                 const string columns = " ItemCode ";
-                const string tableName = "Params";
+                const string tableName = "Parameters";
                 var whereClause = "ParamCode='" + itemCode + "' and ParamCat = '" + paramCat + "'";
                 var dtSetup = await SpExecuteStatements(0, tableName, columns, "", whereClause);
 
