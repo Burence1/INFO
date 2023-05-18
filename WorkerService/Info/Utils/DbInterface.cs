@@ -25,7 +25,7 @@ namespace Info.Utils
 
         protected readonly Loggers Loggers = new();
         protected string? SqlConnectionString = string.Empty;
-        protected readonly string CompName = Environment.MachineName;
+        protected readonly string compName = Environment.MachineName;
 
         // Get the IP from GetHostByName method of dns class.
         private readonly string _ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].MapToIPv4().ToString();
@@ -285,6 +285,9 @@ namespace Info.Utils
 
                 cmd.Parameters.Add("@Mode",SqlDbType.Int).Value = Mode;
                 cmd.Parameters.Add("@processDesc", SqlDbType.VarChar, 100).Value = processDesc;
+                cmd.Parameters.Add("@User",SqlDbType.VarChar,100).Value = Environment.UserName;
+                cmd.Parameters.Add("@compname", SqlDbType.VarChar, 100).Value = compName;
+                cmd.Parameters.Add("@ClientIP", SqlDbType.VarChar, 100).Value = _ip;
                 cmd.Parameters.Add("@etlStatus", SqlDbType.Int).Value = etlStatus;
                 cmd.Parameters.Add("@Result", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
 
