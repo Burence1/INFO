@@ -59,10 +59,10 @@ namespace Info
                 var connStringMaster = await DbConnection.GetConnectionStringMaster(_configuration);
                 var _dbInterface = new DbInterface(_configuration, connStringMaster);
 
-                _sqlCommand = await _dbInterface.DbQueries("Select Top 1 DbName from dbo.Details (Nolock)" +
+                _sqlCommand = await _dbInterface.DbQueries("Select Top 1 ClientName from dbo.Details (Nolock)" +
                     "where Is_ETL_Enabled = 1");
 
-                var _etlDb = await _dbInterface.ExecRecords(3, "Select Top 1 DbName from dbo.Details (Nolock)" +
+                var _etlDb = await _dbInterface.ExecRecords(3, "Select Top 1 ClientName from dbo.Details (Nolock)" +
                     "where Is_ETL_Enabled = 1", _sqlCommand) as string;
 
                 return await Task.FromResult(_etlDb);
