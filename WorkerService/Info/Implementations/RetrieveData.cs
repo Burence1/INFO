@@ -111,7 +111,7 @@ namespace Info
             {
                     var _dbinterface = new DbInterface(_configuration, await DbConnection.GetConnectionString(
                     _configuration, await ETLDatabase()));
-                _sqlCommand = await _dbinterface.ETLProcess(2);
+                _sqlCommand = await _dbinterface.ETLProcess(1);
 
                 _ = _dbinterface.ExecRecords(7, "", _sqlCommand);
                 spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);
@@ -178,7 +178,7 @@ namespace Info
                 var dbInterface = new DbInterface(_configuration,
                     await DbConnection.GetConnectionString(_configuration, await retrieve.ETLDatabase()));
 
-                _sqlCommand = await dbInterface.ETLProcess(3);
+                _sqlCommand = await dbInterface.ETLProcess(1);
 
                 _ = dbInterface.ExecRecords(7, "", _sqlCommand);
                 spResults = (string?)(_sqlCommand?.Parameters["@Result"].Value);

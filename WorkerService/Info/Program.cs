@@ -14,8 +14,7 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .UseSerilog()
+var host = Host.CreateDefaultBuilder(args)
     .UseWindowsService()
     .ConfigureServices((hostContext, services) =>
     {
@@ -35,6 +34,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         {
             new(Guid.NewGuid(),typeof(ETLAutomationJob),"ETL Process Job",RetrieveCronExpressions.RunETLExpression(configuration).Result)
         };
+
+        services.AddSingleton(jobMetadata);
 
         #endregion
 

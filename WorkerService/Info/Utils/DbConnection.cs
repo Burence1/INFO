@@ -12,7 +12,7 @@ namespace Info.Utils
         private string _methodName = string.Empty;
         private readonly Loggers _logger = new();
 
-
+        private static readonly Security Security = new();
         public static async Task<string> GetSqlDate(DateTime dateTime)
         {
             var dateString = dateTime.Year + "-" + dateTime.Month + "-" + dateTime.Day;
@@ -22,7 +22,7 @@ namespace Info.Utils
 
         public static async Task<string> GetConnectionStringMaster(IConfiguration configuration)
         {
-            DbConnection _dbConn = new DbConnection();
+            //DbConnection _dbConn = new DbConnection();
 
             var encryptedSv = configuration["DBConnKeys:SV"];
             var encryptedDb = configuration["DBConnKeys:DB"];
@@ -30,14 +30,14 @@ namespace Info.Utils
             var encryptedPw = configuration["DBConnKeys:PW"];
             var dbConn = configuration["AppSettings:DBConn"];
 
-            var connectionStringMaster = await _dbConn.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw);
-
+            //var connectionStringMaster = await _dbConn.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw);
+            var connectionStringMaster = await Security.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw);
             return await Task.FromResult(connectionStringMaster);
         }
 
         public static async Task<string> GetConnectionString(IConfiguration configuration,string? databaseName)
         {
-            DbConnection _dbConn = new DbConnection();
+            //DbConnection _dbConn = new DbConnection();
 
             var encryptedSv = configuration["DBConnKeys:SV"];
             var encryptedDb = configuration["DBConnKeys:DB"];
@@ -45,7 +45,8 @@ namespace Info.Utils
             var encryptedPw = configuration["DBConnKeys:PW"];
             var dbConn = configuration["AppSettings:DBConn"];
 
-            return await Task.FromResult(await _dbConn.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw));
+            //return await Task.FromResult(await dbConn.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw));
+            return await Task.FromResult(await Security.ConfigureConn(dbConn, encryptedSv, encryptedDb, encryptedUi, encryptedPw));
         }
 
         public async Task<string> ConfigureConn(string dbConn, string encrSv, string encrDb, string encrUi, string encrPw)

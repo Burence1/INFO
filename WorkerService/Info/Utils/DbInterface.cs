@@ -224,7 +224,7 @@ namespace Info.Utils
                 myConnection.Open();
                 var myCmd = new SqlCommand()
                 {
-                    CommandText = "[dbo].[spExecuteStatements]",
+                    CommandText = "[STMTDATA].[dbo].[spExecuteStatements]",
                     CommandTimeout = 120,
                     CommandType = CommandType.StoredProcedure,
                     Connection = myConnection
@@ -277,7 +277,7 @@ namespace Info.Utils
                 connString.Open();
                 var cmd = new SqlCommand()
                 {
-                    CommandText = "[dbo].[ETLProcess]",
+                    CommandText = "[STMTDATA].[dbo].[ASP_ETLProcess]",
                     CommandTimeout = 0,
                     CommandType = CommandType.StoredProcedure,
                     Connection = connString

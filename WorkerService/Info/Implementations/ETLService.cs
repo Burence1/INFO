@@ -49,7 +49,7 @@ namespace Info.Implementations
 
                         case true when customerInfoEtl.Result == false:
                             result = false;
-                            _logger.CreateLogs("Customer Info ETL has Completed Successfully failed!!");
+                            _logger.CreateLogs("Customer Info ETL has failed!!");
                             break;
                     }
                         }, token);
