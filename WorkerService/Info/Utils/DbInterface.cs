@@ -26,6 +26,9 @@ namespace Info.Utils
         protected readonly Loggers Loggers = new();
         protected string? SqlConnectionString = string.Empty;
         protected readonly string compName = Environment.MachineName;
+        private SqlCommand? _sqlCommand;
+
+        protected dynamic _dbname;
 
         // Get the IP from GetHostByName method of dns class.
         private readonly string _ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].MapToIPv4().ToString();
@@ -34,6 +37,7 @@ namespace Info.Utils
         {
             Configuration = configuration;
             _connectionString = connectionStr; //Tools.GetConnectionString(Configuration);
+            _dbname = DataWareHouse().Result;
         }
 
     public SqlConnection MySqlConnection()
@@ -186,6 +190,28 @@ namespace Info.Utils
             }
         }
 
+        //Get Top warehouse Db
+        public async Task<string?> DataWareHouse()
+        {
+            try
+            {
+                var connStringMaster = await DbConnection.GetConnectionStringMaster(Configuration);
+
+                _sqlCommand = await DbQueries("Select Top 1 ClientName from dbo.Details (Nolock)" +
+                    "where Is_Data_wareHouse = 1");
+
+                var _dbName = await ExecRecords(3, "Select Top 1 ClientName from dbo.Details (Nolock)" +
+                    "where Is_Data_wareHouse = 1", _sqlCommand) as string;
+
+                return await Task.FromResult(_dbName);
+            }
+            catch (Exception ex)
+            {
+                Loggers.LogMethodsErrorDetails(MethodName, ex, 0, 0);
+                throw;
+            }
+        }
+
         public async Task<string> GetParams(string itemCode, string paramCat)
         {
             try
@@ -224,7 +250,7 @@ namespace Info.Utils
                 myConnection.Open();
                 var myCmd = new SqlCommand()
                 {
-                    CommandText = "[STMTDATA].[dbo].[spExecuteStatements]",
+                    CommandText = $"{_dbname}.[dbo].[spExecuteStatements]",
                     CommandTimeout = 120,
                     CommandType = CommandType.StoredProcedure,
                     Connection = myConnection
@@ -277,7 +303,7 @@ namespace Info.Utils
                 connString.Open();
                 var cmd = new SqlCommand()
                 {
-                    CommandText = "[STMTDATA].[dbo].[ASP_ETLProcess]",
+                    CommandText = $"{_dbname}.[dbo].[ASP_ETLProcess]",
                     CommandTimeout = 0,
                     CommandType = CommandType.StoredProcedure,
                     Connection = connString
