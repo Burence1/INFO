@@ -1,0 +1,17 @@
+version: v1
+application_name: Info-App
+database_name: info
+database_port: 1433
+database_password: Software@1
+database_username: sa
+server_port: 8076
+
+
+auth:
+  users:
+    loginadmin:
+      role: admin
+      password: loginpass
+    bookadmin:
+      role: user
+      password: bookpass

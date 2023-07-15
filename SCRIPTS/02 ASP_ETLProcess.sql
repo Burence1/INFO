@@ -5,40 +5,75 @@ END;
 GO
 
 CREATE PROCEDURE dbo.ASP_ETLProcess
-  @mode AS           INT, @User VARCHAR(100), @compname VARCHAR(100), @ClientIP VARCHAR(100), @Language VARCHAR(10),
-  @BackupDescription VARCHAR(500), @AlertMsgNo VARCHAR(500) ='', @eodStatus INT=0, @nitro VARCHAR(500) ='',
-  @MandatoryItems    INT OUTPUT, @Result VARCHAR(500) OUTPUT
+  @mode AS INT, @User VARCHAR(100), @compname VARCHAR(100), @ClientIP VARCHAR(100), @processDesc VARCHAR(500), @etlStatus INT=0,
+  @Result VARCHAR(500) OUTPUT
 AS
+
+/**VARIABLES**/
+Declare @DatabaseName varchar(1000) = ''
+Declare @InstitutionName nvarchar(250)
+DECLARE @SQL NVARCHAR(Max);
+DECLARE @Parameters NVARCHAR(1000);
+
 BEGIN
   BEGIN TRY
-    --DECLARE @SystemDate DATE=(dbo.GetSystemDate(1, dbo.GetSetupItem('HQBRANCHID'), GETDATE()));
-    DECLARE @InstitutionName VARCHAR(50) =DB_NAME();
 
-    --SET @SystemDate=ISNULL(@SystemDate, GETDATE());
+  Begin transaction
+  	SELECT @DatabaseName = ISNULL(ltrim(rtrim(Client)),''),@InstitutionName = ClientName FROM [Master].[dbo].[DETAILS] with(nolock) WHERE InstitutionCode = '001';
 
-    --DECLARE @Prevsysdate VARCHAR(50) =(SELECT TOP(1)sysdate FROM dbo.SystemData(NOLOCK)ORDER BY code);
-    --DECLARE @Nextsysdate DATE =dbo.GetNextprocDate(@Prevsysdate);
-    DECLARE @SQL NVARCHAR(1000);
-    DECLARE @Parameters NVARCHAR(1000);
+    DECLARE @SystemDate DATE=(select convert(varchar, getdate(), 20));
+    --DECLARE @InstitutionName VARCHAR(50) = DB_NAME();
 
-    --DECLARE @BranchName VARCHAR(50) =(SELECT  BranchName FROM DBO.Branches (NOLOCK) WHERE BranchCode=@TxnBranchId)
 
-    -- Perform EOD Checks that happen before EOD.
     IF @mode=1
     BEGIN
-     
+
+	 SET @Sql = N'INSERT INTO [dbo].[customer_details]
+           ([acno]
+           ,[firstName]
+           ,[middleName]
+           ,[lastName]
+           ,[FullName]
+           ,[address]
+           ,[city]
+           ,[personalno]
+           ,[Saccomno]
+           ,[joiningDate]
+           ,[mobileNo]
+           ,[gender]
+           ,[Employer]
+           ,[officer]
+           ,[Occupation]
+           ,[YEARBIRTH]
+           ,[Email]
+           ,[MaritalStatus]
+           ,[BankAccount]
+           ,[BranchId]
+           ,[BCode]
+           ,[BaseNo])
+     select top (20) acno,fname,mname,lname,fullName,address,city,personalno,saccomno,entrydate,telephone,sex,employer,officer,occupation,
+	 yearbirth,email,maritalStatus,bankaccount,branchid,bcode,baseno from '+@DatabaseName+'.dbo.customer'
+	 
+	 EXEC sp_executesql @Sql;
+
+	 select * from dbo.[customer_details]
+
     END;
 
+	Commit;
   END TRY
   BEGIN CATCH
     SET @Result='0 - Error(s) Occurred: '+ERROR_MESSAGE();
+
+	select @Result
+RollBack
 
     INSERT INTO dbo.ErrorLog_N(ProgModule, Source, Terminal, SaccoUser, ErrorDate, brcode, Error, ErrorNumber,
                                ErrorSeverity, ErrorState, ErrorLine, ErrorProcedure)
     VALUES(
             'Date: '+CONVERT(VARCHAR(MAX), @SystemDate),
             ('Line'+CONVERT(VARCHAR(MAX), ERROR_LINE())+', Source: '+ERROR_PROCEDURE()), @compname, @User, GETDATE(),
-            @brcode, ERROR_MESSAGE(), ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_LINE(), ERROR_PROCEDURE()
+            '', ERROR_MESSAGE(), ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_LINE(), ERROR_PROCEDURE()
           );
   END CATCH;
 END;
