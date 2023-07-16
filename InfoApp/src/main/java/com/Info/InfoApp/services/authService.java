@@ -26,7 +26,7 @@ public class authService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email)
     throws UsernameNotFoundException {
-        return (UserDetails) userRepository.findbyEmail(email)
+        return userRepository.findByemail(email)
                 .orElseThrow(()->
                         new UsernameNotFoundException(
                                 String.format(USER_NOT_FOUND_MSG,email)
@@ -34,7 +34,7 @@ public class authService implements UserDetailsService {
     }
 
     public String signUpUser(User user){
-        boolean userExists = userRepository.findbyEmail(user.getEmail()).isPresent();
+        boolean userExists = userRepository.findByemail(user.getEmail()).isPresent();
 
         if(userExists){
             throw new IllegalStateException("email already registered");
@@ -57,7 +57,7 @@ public class authService implements UserDetailsService {
         return token;
     }
 
-    public int enableAppUser(String email) {
-        return userRepository.enableUser(email);
-    }
+//    public int enableAppUser(String email) {
+//        return userRepository.enableUser(email);
+//    }
 }

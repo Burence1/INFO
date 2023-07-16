@@ -5,20 +5,25 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "comfirmationToken")
 public class confirmationToken {
 
     @Id
     @GeneratedValue(
-            strategy = GenerationType.AUTO
+            strategy = GenerationType.IDENTITY
     )
-    private Long id;
+    @Column(name = "token_id", nullable = false, columnDefinition = "NUMERIC(38,0)", unique = true)
+    private BigInteger id;
 
     @Column(nullable = false)
     private String token;
@@ -31,11 +36,9 @@ public class confirmationToken {
 
     private LocalDateTime confirmedAt;
 
-    @ManyToOne
-    @JoinColumn(
-            nullable = false,
-            name = "user_id"
-    )
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
     public confirmationToken(String token,

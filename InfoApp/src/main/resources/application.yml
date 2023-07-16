@@ -4,14 +4,34 @@ database_name: info
 database_port: 1433
 database_password: Software@1
 database_username: sa
-server_port: 8076
+server_port: 8081
 
+server:
+  error:
+    whitelabel:
+      enabled: true
+  port: ${server_port}
 
-auth:
-  users:
-    loginadmin:
-      role: admin
-      password: loginpass
-    bookadmin:
-      role: user
-      password: bookpass
+spring:
+  application:
+    name: ${application_name}
+  datasource:
+    password: ${database_password}
+    url: jdbc:sqlserver://localhost:${database_port};DatabaseName=${database_name};encrypt=true;trustServerCertificate=true;
+    username: ${database_username}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
+        format_sql: true
+    show-sql: true
+#jpa:
+#  hibernate:
+#    ddl-auto: create-drop
+#  properties:
+#    hibernate:
+#      dialect: org.hibernate.dialect.SQLServer2012Dialect
+#      format_sql: true
+#  show-sql: true

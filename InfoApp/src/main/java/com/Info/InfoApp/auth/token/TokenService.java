@@ -20,8 +20,8 @@ public class TokenService {
         return tokenRepository.findByToken(token);
     }
 
-    public int setConfirmedAt(String token) {
-        return tokenRepository.updateConfirmedAt(
-                token, LocalDateTime.now());
-    }
+//    public int setConfirmedAt(String token) {
+//        return tokenRepository.updateConfirmedAt(
+//                token, LocalDateTime.now());
+//    }
 }

@@ -7,17 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.Optional;
 
-@Repository
-@Transactional(readOnly = true)
-public interface UserRepository extends JpaRepository<User, Long>{
+public interface UserRepository extends JpaRepository<User, BigInteger>{
 
-    Optional<User> findbyEmail(String email);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE user a " +
-            "SET a.enabled = TRUE WHERE a.email = ?1")
-    int enableUser(String email);
+    Optional<User> findByemail(String email);
+    //User findbyEmail(String email);
+//    @Transactional
+//    @Modifying
+//    @Query("UPDATE user a " +
+//            "SET a.enabled = TRUE WHERE a.email = ?1")
+//    int enableUser(String email);
 }
