@@ -1,4 +1,4 @@
-package com.Info.InfoApp.models;
+package com.Info.InfoApp.Entity;
 
 import com.Info.InfoApp.enums.UserRole;
 import jakarta.persistence.*;
@@ -14,7 +14,7 @@ import java.util.Collection;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name ="app_user")
+@Table(name ="appuser")
 public class User implements UserDetails{
 
     @Id
@@ -23,7 +23,7 @@ public class User implements UserDetails{
     )
     @Column(name = "user_id", nullable = false, columnDefinition = "NUMERIC(38,0)", unique = true)
     private BigInteger Id;
-    private String UserName;
+    private String userName;
     private String email;
     private String password;
     private Boolean enabled = false;
@@ -31,10 +31,11 @@ public class User implements UserDetails{
     private UserRole userRole;
     private Boolean locked = false;
 
-    public User(String userName,String email,String password){
-        this.UserName = userName;
+    public User(String userName,String email,String password,UserRole userRole){
+        this.userName = userName;
         this.email = email;
         this.password = password;
+        this.userRole = userRole;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class User implements UserDetails{
 
     @Override
     public String getUsername() {
-        return UserName;
+        return userName;
     }
 
     @Override

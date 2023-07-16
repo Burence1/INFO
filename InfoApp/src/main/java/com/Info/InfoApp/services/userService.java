@@ -2,7 +2,7 @@ package com.Info.InfoApp.services;
 
 import com.Info.InfoApp.auth.token.TokenService;
 import com.Info.InfoApp.auth.token.confirmationToken;
-import com.Info.InfoApp.models.User;
+import com.Info.InfoApp.Entity.User;
 import com.Info.InfoApp.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class authService implements UserDetailsService {
+public class userService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND_MSG = "no user with %s found";
     private final UserRepository userRepository;
@@ -58,6 +58,6 @@ public class authService implements UserDetailsService {
     }
 
 //    public int enableAppUser(String email) {
-//        return userRepository.enableUser(email);
+//        return userRepository.enableAppUser(email);
 //    }
 }

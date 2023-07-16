@@ -1,6 +1,6 @@
 package com.Info.InfoApp.auth.token;
 
-import com.Info.InfoApp.models.User;
+import com.Info.InfoApp.Entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "comfirmationToken")
+@Table(name = "comfirmation_token")
 public class confirmationToken {
 
     @Id
