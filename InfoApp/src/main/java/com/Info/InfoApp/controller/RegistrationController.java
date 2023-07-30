@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Formatter;
 
 @RestController
 public class RegistrationController {
@@ -18,8 +19,15 @@ public class RegistrationController {
     private UserService userService;
 
     @PostMapping("/register")
-    public User reisterUser(@RequestBody UserModel userModel, final HttpServletRequest request) throws IOException {
-        User user = userService.registerUser(userModel);
-        return user;
+    public String reisterUser(@RequestBody UserModel userModel, final HttpServletRequest request){
+        try{
+            User user = userService.registerUser(userModel);
+            return new Formatter().format("Successfully Created %s", user.getFirstName() + " " +
+                    user.getLastName()).toString();
+        }
+        catch (Exception e){
+            return e.getMessage();
+        }
+
     }
 }
