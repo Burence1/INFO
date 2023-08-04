@@ -69,6 +69,17 @@ public class AuthController {
         return "User Already Verified";
     }
 
+    @GetMapping("/hello")
+    public String Hello(){
+        try{
+            return "Test";
+        }
+        catch (Exception exception){
+            return exception.getMessage();
+        }
+
+    }
+
     @GetMapping("/resendVerifyToken")
     public String resendVerificationToken(@RequestParam("token") String oldToken
             ,HttpServletRequest request){
