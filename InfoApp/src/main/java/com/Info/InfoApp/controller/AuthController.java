@@ -3,29 +3,49 @@ package com.Info.InfoApp.controller;
 import com.Info.InfoApp.Entity.User;
 import com.Info.InfoApp.Entity.VerificationToken;
 import com.Info.InfoApp.event.RegistrationCompleteEvent;
+import com.Info.InfoApp.model.AuthRequest;
 import com.Info.InfoApp.model.UserModel;
+import com.Info.InfoApp.service.JwtService;
 import com.Info.InfoApp.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
+import org.springframework.security.authentication.AuthenticationManager;
 import java.util.Formatter;
 
 @RestController
 @Slf4j
-public class RegistrationController {
+public class AuthController {
 
     @Autowired
     private UserService userService;
-
     @Autowired
     private ApplicationEventPublisher publisher;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @PostMapping("/authenticate")
+    public String authenticate(@RequestBody AuthRequest authRequest){
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUserName(),authRequest.getPassword()));
+        if(authentication.isAuthenticated()){
+            return jwtService.generateToken(authRequest.getUserName());
+        }
+        else {
+            throw new UsernameNotFoundException("invalid user request !");
+        }
+    }
 
     @PostMapping("/register")
-    public String reisterUser(@RequestBody UserModel userModel, final HttpServletRequest request){
+    public String registerUser(@RequestBody UserModel userModel, final HttpServletRequest request){
         try{
             User user = userService.registerUser(userModel);
             publisher.publishEvent(new RegistrationCompleteEvent(
@@ -46,7 +66,7 @@ public class RegistrationController {
 
         if(result.equalsIgnoreCase("valid"))
             return "User Verified Successfully";
-        return "Bad User";
+        return "User Already Verified";
     }
 
     @GetMapping("/resendVerifyToken")
