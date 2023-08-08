@@ -1,6 +1,6 @@
 version: v1
 application_name: Info-App
-database_name: info
+database_name: STMTDATA
 database_port: 1433
 database_password: Software@1
 database_username: sa

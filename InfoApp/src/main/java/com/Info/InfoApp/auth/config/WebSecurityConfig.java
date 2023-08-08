@@ -26,7 +26,7 @@ public class WebSecurityConfig {
     @Autowired
     private jwtAuthFilter authFilter;
     public static final String[] WHITE_LIST_URLS =
-            {"/register","/resendVerifyToken","/verifyRegistration","/authenticate"};
+            {"/register","/resendVerifyToken","/verifyRegistration","/authenticate","/createAlert"};
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
